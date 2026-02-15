@@ -22,8 +22,22 @@ export const registerUser = async (req, res) => {
       password: hashedPassword,
     });
 
-    res.status(201).json({ message: "User registered", user });
-  } catch (error) {
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.status(201).json({
+      token,
+      user: {
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } 
+  catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
